@@ -1,0 +1,9 @@
+using UnityEngine;
+namespace Mosswood {
+ public class MossBolt : MonoBehaviour {
+  Vector2 velocity;bool hostile;int damage;float age;MossJourney journey;SpriteRenderer art;
+  public static MossBolt Spawn(Sprite sprite,Material material,Vector3 pos,Vector2 velocity,bool hostile,MossJourney journey,int damage){var g=new GameObject(hostile?"Thorn bolt":"Spirit bolt");g.transform.position=pos;g.transform.localScale=Vector3.one*(hostile?.65f:.48f);var s=g.AddComponent<SpriteRenderer>();s.sprite=sprite;s.sharedMaterial=material;s.sortingOrder=40;s.color=hostile?new Color(1,.35f,.24f):new Color(.6f,1,.94f);var b=g.AddComponent<MossBolt>();b.velocity=velocity;b.hostile=hostile;b.journey=journey;b.damage=damage;b.art=s;return b;}
+  void Update(){if(!journey||!journey.IsPlaying)return;float dt=Time.deltaTime;age+=dt;if(age>3.5f){Destroy(gameObject);return;}Vector2 from=transform.position;Vector2 to=from+velocity*dt;bool hit=false;if(hostile){var c=journey.traveler.GetComponent<BoxCollider2D>();var bounds=c.bounds;bounds.Expand(.2f);hit=bounds.IntersectRay(new Ray(from,velocity.normalized),out float distance)&&distance<=velocity.magnitude*dt;if(hit)journey.Combat.Hurt(damage);}else{foreach(var h in Physics2D.CircleCastAll(from,.2f,velocity.normalized,velocity.magnitude*dt)){var boss=h.collider.GetComponentInParent<MossGuardian>();if(boss&&boss.TakeHit(damage)){hit=true;break;}var enemy=h.collider.GetComponentInParent<MossWisp>();if(enemy&&enemy.TakeHit(damage)){hit=true;break;}if(!h.collider.isTrigger&&h.collider.gameObject.layer==6){hit=true;break;}}}transform.position=to;if(hit){MossEffect.Burst(art.sprite,art.sharedMaterial,to,art.color,4);Destroy(gameObject);}}
+  public static void Clear(){foreach(var b in FindObjectsByType<MossBolt>(FindObjectsSortMode.None))Destroy(b.gameObject);}
+ }
+}
