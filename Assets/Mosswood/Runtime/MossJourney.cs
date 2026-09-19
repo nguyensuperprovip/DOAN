@@ -19,7 +19,7 @@ namespace Mosswood {
    seedBits=PlayerPrefs.GetInt(SavePrefix+"seeds",0);shrineBits=PlayerPrefs.GetInt(SavePrefix+"shrines",0);Completed=PlayerPrefs.GetInt(SavePrefix+"complete",0)==1;
    checkpoint=new Vector3(Mathf.Clamp(PlayerPrefs.GetFloat(SavePrefix+"x",0),-2,finishX),Mathf.Clamp(PlayerPrefs.GetFloat(SavePrefix+"y",-1.9f),-3,6),0);
    for(int i=0;i<seeds.Length;i++)if((seedBits&(1<<i))!=0)seeds[i].gameObject.SetActive(false);
-   traveler.Warp(checkpoint);traveler.Locked=true;Camera.main.GetComponent<MossCamera>()?.Snap();
+   var terrain=FindAnyObjectByType<MossTerrainProfile>();if(terrain){if(terrain.IsGap(checkpoint.x))checkpoint.x=0;checkpoint.y=terrain.HeightAt(checkpoint.x)+1.4f;}traveler.Warp(checkpoint);traveler.Locked=true;Camera.main.GetComponent<MossCamera>()?.Snap();
    MakeSound();muted=PlayerPrefs.GetInt("DOAN.Mosswood.muted",0)==1;ApplySound();Refresh();ui.ShowMenu(false);
   }
   public void Continue(){Started=true;paused=false;panel.SetActive(false);traveler.Locked=false;Time.timeScale=1;}
@@ -48,3 +48,4 @@ namespace Mosswood {
   void OnDestroy(){Time.timeScale=1;PlayerPrefs.Save();if(ambience)Destroy(ambience);if(chime)Destroy(chime);}
  }
 }
+

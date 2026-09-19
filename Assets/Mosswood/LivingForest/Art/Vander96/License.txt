@@ -1,0 +1,6 @@
+Bat animations — Vander96 (submitted by Anonymous), 2012-04-30
+Source: https://opengameart.org/content/bat-animations
+Downloaded: 2026-09-19
+License: CC0 1.0 https://creativecommons.org/publicdomain/zero/1.0/
+Original file: https://opengameart.org/sites/default/files/battt.png
+Only the three flying frames are used in the game.
